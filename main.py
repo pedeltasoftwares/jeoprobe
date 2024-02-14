@@ -8,50 +8,44 @@ from tkinter import filedialog
 import re
 import numpy as np
 import shutil
+import xlsxwriter
+import openpyxl
 
-def ventana_senales_peer():
+def generar_ventana_1():
 
-    global senales_peer,textbox_ruta_carpeta_senales_peer,boton_siguiente_senales_peer,seleccionar_sismos
-
-    """
-    SELECCIONAR CARPETA DONDE ESTÁN LAS SEÑALES DEL PEER
-    """
-    try:
-        seleccionar_sismos.destroy()
-    except:
-        pass
+    global ventana_nivel_1,textbox_ruta_carpeta_senales_peer,boton_siguiente_senales_peer,seleccionar_sismos
 
     #Ventana top level
-    senales_peer = CTkToplevel()
+    ventana_nivel_1 = CTkToplevel()
     #Nombre de la ventana
-    senales_peer.title("Examinar")
+    ventana_nivel_1.title("Examinar")
     #Resizable
-    senales_peer.resizable(False,False)
-    senales_peer.transient(menu_window)
-    senales_peer.grab_set()
+    ventana_nivel_1.resizable(False,False)
+    ventana_nivel_1.transient(menu_window)
+    ventana_nivel_1.grab_set()
     #Tema de la ventana
     set_appearance_mode("light")
     #Geometría
     width = 400
     height = 130
-    screen_width = senales_peer.winfo_screenwidth()
-    screen_height = senales_peer.winfo_screenheight()
+    screen_width = ventana_nivel_1.winfo_screenwidth()
+    screen_height = ventana_nivel_1.winfo_screenheight()
     x = (screen_width - width) // 2
     y = (screen_height - height) // 2
-    senales_peer.geometry(f"{width}x{height}+{x}+{y}")
+    ventana_nivel_1.geometry(f"{width}x{height}+{x}+{y}")
     #Ícono ventana
-    senales_peer.after(201, lambda :senales_peer.iconbitmap("icono_principal.ico"))
+    ventana_nivel_1.after(201, lambda :ventana_nivel_1.iconbitmap("icono_principal.ico"))
     #Label
-    label = CTkLabel(master=senales_peer,text=f"Ruta de almacenamiento señales PEER: ",font=('Gothic A1',13))
+    label = CTkLabel(master=ventana_nivel_1,text=f"Ruta de almacenamiento señales PEER: ",font=('Gothic A1',13))
     label.place(x=20,y=5)
     #Textbox de la ruta de carpeta
-    textbox_ruta_carpeta_senales_peer = CTkTextbox(master=senales_peer,font=('Gothic A1',12), text_color=("gray10", "gray90"),width=270,height=10,state=DISABLED,activate_scrollbars=False)
+    textbox_ruta_carpeta_senales_peer = CTkTextbox(master=ventana_nivel_1,font=('Gothic A1',12), text_color=("gray10", "gray90"),width=270,height=10,state=DISABLED,activate_scrollbars=False)
     textbox_ruta_carpeta_senales_peer.place(x=20,y=40)
     #Boton examinar
-    boton_examinar_ruta = CTkButton(master= senales_peer, text="Examinar", width=80, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75,command=seleccionar_ruta_senales_peer)
+    boton_examinar_ruta = CTkButton(master= ventana_nivel_1, text="Examinar", width=80, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75,command=seleccionar_ruta_senales_peer)
     boton_examinar_ruta.place(x=300,y=40)
     #Boton siguiente señales peer
-    boton_siguiente_senales_peer = CTkButton(master= senales_peer, text="Siguiente", width=80, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75,state=tkinter.DISABLED,command=verificar_sismos_peer)
+    boton_siguiente_senales_peer = CTkButton(master= ventana_nivel_1, text="Siguiente", width=80, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75,state=tkinter.DISABLED,command=verificar_sismos_peer)
     boton_siguiente_senales_peer.place(x=160,y=85)
 
 def seleccionar_ruta_senales_peer():
@@ -73,7 +67,14 @@ def seleccionar_ruta_senales_peer():
 
 def verificar_sismos_peer():
 
-    global textbox_ruta_carpeta_senales_peer,senales_peer
+    def destruir_errores_ventana_1():
+        #modifica el textbox
+        textbox_ruta_carpeta_senales_peer.configure(state=NORMAL)
+        textbox_ruta_carpeta_senales_peer.delete(0.0,"end")
+        textbox_ruta_carpeta_senales_peer.configure(state=DISABLED)
+        #destruye la ventana
+        window_logs.destroy()
+
 
     #Warning si la carpeta está vacía
     if len(os.listdir(carpeta_senales)) == 0:
@@ -81,7 +82,7 @@ def verificar_sismos_peer():
         window_logs = CTkToplevel()
         window_logs.title("Error")
         window_logs.resizable(False,False)
-        window_logs.transient(senales_peer)
+        window_logs.transient(ventana_nivel_1)
         window_logs.grab_set()
         width = 200
         height = 100
@@ -96,7 +97,7 @@ def verificar_sismos_peer():
         label_log = CTkLabel(master=window_logs,text=f"Carpeta vacía. \nPor favor seleccione otra.",font=('Gothic A1',13))
         label_log.place(x=30,y=18)
         #Botón de ok
-        OKBoton_window_log = CTkButton(master= window_logs,text="OK", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=window_logs.destroy)
+        OKBoton_window_log = CTkButton(master= window_logs,text="OK", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=destruir_errores_ventana_1)
         OKBoton_window_log.place(x=80,y=65)
         
     else:
@@ -108,15 +109,15 @@ def verificar_sismos_peer():
                 break
         
         if contiene_AT2:
-            # Cerrar la ventana actual
-            senales_peer.destroy()
-            seleccionar_sismos_peer()
+            # Minimizar la ventana actual
+            ventana_nivel_1.withdraw()
+            generar_ventana_2()
 
         else:
             window_logs = CTkToplevel()
             window_logs.title("Error")
             window_logs.resizable(False,False)
-            window_logs.transient(senales_peer)
+            window_logs.transient(ventana_nivel_1)
             window_logs.grab_set()
             width = 200
             height = 100
@@ -131,42 +132,49 @@ def verificar_sismos_peer():
             label_log = CTkLabel(master=window_logs,text=f"Archivos no válidos.",font=('Gothic A1',13))
             label_log.place(x=45,y=18)
             #Botón de ok
-            OKBoton_window_log = CTkButton(master= window_logs,text="OK", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=window_logs.destroy)
+            OKBoton_window_log = CTkButton(master= window_logs,text="OK", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=destruir_errores_ventana_1)
             OKBoton_window_log.place(x=80,y=55)
 
-def seleccionar_sismos_peer():
+def generar_ventana_2():
 
-    global seleccionar_sismos,file_listbox
+    global ventana_nivel_2,file_listbox
 
     #Abrir la ventana para seleccionar sismos
-    seleccionar_sismos = CTkToplevel()
-    seleccionar_sismos.title("Seleccionar sismos")
-    seleccionar_sismos.resizable(False,False)
-    seleccionar_sismos.transient(menu_window)
-    seleccionar_sismos.grab_set()
+    ventana_nivel_2 = CTkToplevel()
+    ventana_nivel_2.title("Seleccionar sismos")
+    ventana_nivel_2.resizable(False,False)
+    ventana_nivel_2.transient(ventana_nivel_1)
+    ventana_nivel_2.grab_set()
     set_appearance_mode("light")
     width = 350
     height = 300
-    screen_width = seleccionar_sismos.winfo_screenwidth()
-    screen_height = seleccionar_sismos.winfo_screenheight()
+    screen_width = ventana_nivel_2.winfo_screenwidth()
+    screen_height = ventana_nivel_2.winfo_screenheight()
     x = (screen_width - width) // 2
     y = (screen_height - height) // 2
-    seleccionar_sismos.geometry(f"{width}x{height}+{x}+{y}")
+    ventana_nivel_2.geometry(f"{width}x{height}+{x}+{y}")
     #Ícono ventana
-    seleccionar_sismos.after(201, lambda :seleccionar_sismos.iconbitmap("icono_principal.ico"))
+    ventana_nivel_2.after(201, lambda :ventana_nivel_2.iconbitmap("icono_principal.ico"))
     #Listbox
-    file_listbox = tkinter.Listbox(seleccionar_sismos, selectmode=tkinter.MULTIPLE, width=50, height=15)
+    file_listbox = tkinter.Listbox(ventana_nivel_2, selectmode=tkinter.MULTIPLE, width=50, height=15)
     file_listbox.place(x=22,y=10)
     files = list_files(carpeta_senales)
     file_listbox.delete(0, tkinter.END)
     for file in files:
         file_listbox.insert(tkinter.END, file)
     #Boton de volver
-    boton_volver = CTkButton(master= seleccionar_sismos,text="Volver", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=ventana_senales_peer)
+    boton_volver = CTkButton(master= ventana_nivel_2,text="Volver", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=f_volver) 
     boton_volver.place(x=80,y=265)
     #Boton de seleccionar
-    boton_seleccionar = CTkButton(master= seleccionar_sismos,text="Escalar sismos", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=escalar_sismos)
+    boton_seleccionar = CTkButton(master= ventana_nivel_2,text="Escalar sismos", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=generar_ventana_3)
     boton_seleccionar.place(x=190,y=265)
+
+def f_volver():
+
+    #Destruye la ventana actual
+    ventana_nivel_2.destroy()
+    #Muestra la ventana anterior
+    ventana_nivel_1.deiconify()
 
 def list_files(directory):
 
@@ -184,17 +192,19 @@ def list_files(directory):
         
     return earthquak_names
 
-def escalar_sismos():
+def generar_ventana_3():
 
-    global input_factor_escala,escalar_sismos,boton_escalar,sismos_seleccionados
+    global input_factor_escala,escalar_sismos,boton_escalar,sismos_seleccionados,ventana_nivel_3
 
     sismos_seleccionados = [file_listbox.get(idx) for idx in file_listbox.curselection()]
+    #TODO: borrar
+    print(sismos_seleccionados)
 
     if len(sismos_seleccionados) == 0:
         window_logs = CTkToplevel()
         window_logs.title("Error")
         window_logs.resizable(False,False)
-        window_logs.transient(seleccionar_sismos)
+        window_logs.transient(ventana_nivel_2)
         window_logs.grab_set()
         width = 200
         height = 100
@@ -214,35 +224,35 @@ def escalar_sismos():
 
     else:
 
-        #destruye la ventana de seleccion de sismos
-        seleccionar_sismos.destroy()
+        #oculta la ventana de seleccion de sismos
+        ventana_nivel_2.withdraw()
 
         #Abre la ventana para ingresar el factor para escalar sismos
-        escalar_sismos = CTkToplevel()
-        escalar_sismos.title("Escalar sismos")
-        escalar_sismos.resizable(False,False)
-        escalar_sismos.transient(menu_window)
-        escalar_sismos.grab_set()
+        ventana_nivel_3 = CTkToplevel()
+        ventana_nivel_3.title("Escalar sismos")
+        ventana_nivel_3.resizable(False,False)
+        ventana_nivel_3.transient(ventana_nivel_2)
+        ventana_nivel_3.grab_set()
         set_appearance_mode("light")
         width = 200
         height = 120
-        screen_width = escalar_sismos.winfo_screenwidth()
-        screen_height = escalar_sismos.winfo_screenheight()
+        screen_width = ventana_nivel_3.winfo_screenwidth()
+        screen_height = ventana_nivel_3.winfo_screenheight()
         x = (screen_width - width) // 2
         y = (screen_height - height) // 2
-        escalar_sismos.geometry(f"{width}x{height}+{x}+{y}")
+        ventana_nivel_3.geometry(f"{width}x{height}+{x}+{y}")
         #Ícono ventana
-        escalar_sismos.after(201, lambda :escalar_sismos.iconbitmap("icono_principal.ico"))
+        ventana_nivel_3.after(201, lambda :ventana_nivel_3.iconbitmap("icono_principal.ico"))
         #Label
-        label = CTkLabel(master=escalar_sismos,text=f"Factor de escala:",font=('Gothic A1',13))
+        label = CTkLabel(master=ventana_nivel_3,text=f"Factor de escala:",font=('Gothic A1',13))
         label.place(x=50,y=8)
         #entry factor de escala
         factor_escala = ""
-        input_factor_escala=CTkEntry(master=escalar_sismos, width=100, placeholder_text='Ej: 1.5')
+        input_factor_escala=CTkEntry(master=ventana_nivel_3, width=100, placeholder_text='Ej: 1.5')
         input_factor_escala.place(x=50, y=40)
         input_factor_escala.bind("<Leave>", lambda event: verificar_factor_escala())
         #Botón de escalar sismos
-        boton_escalar = CTkButton(master= escalar_sismos,text="OK", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, state=tkinter.DISABLED, command=funcion_escalar_sismos)
+        boton_escalar = CTkButton(master= ventana_nivel_3,text="OK", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, state=tkinter.DISABLED, command=funcion_escalar_sismos)
         boton_escalar.place(x=75,y=80)
 
 def verificar_factor_escala():
@@ -250,16 +260,18 @@ def verificar_factor_escala():
 
     factor_escala = input_factor_escala.get()
 
-    try:
-        if factor_escala != "":
-            factor_escala = float(factor_escala)
-            boton_escalar.configure(state=tkinter.NORMAL)
+    patron = r'^[-+]?(\d+(\.\d*)?|\.\d+)$'
+    match = re.match(patron, factor_escala) is not None and not factor_escala.isspace()
 
-    except ValueError:
+    if match:
+        factor_escala = float(factor_escala)
+        boton_escalar.configure(state=tkinter.NORMAL)
+    else:
+
         window_logs = CTkToplevel()
         window_logs.title("Error")
         window_logs.resizable(False,False)
-        window_logs.transient(escalar_sismos)
+        window_logs.transient(ventana_nivel_3)
         window_logs.grab_set()
         width = 200
         height = 100
@@ -283,8 +295,8 @@ def funcion_escalar_sismos():
     #Ruta de almacenamiento
     ruta_documentos = os.path.expanduser("~\\Documents")
 
-    #Destruye la ventana del factor
-    escalar_sismos.destroy()
+    #Oculta la ventana del factor
+    ventana_nivel_3.withdraw()
 
     if "log.log" in os.listdir(ruta_documentos):
         os.remove(f"{ruta_documentos}/log.log")
@@ -311,6 +323,10 @@ def funcion_escalar_sismos():
         
         #Escribe los archivos
         write_files(sismos)
+
+        #Genera un excel para graficar los sismos seleccionados
+        plot_signals(sismos,ruta_documentos)
+
         #Genera el log de terminación
         with open(f"{ruta_documentos}/log.log","w") as f:
             pass
@@ -324,9 +340,9 @@ def generar_ventana_progreso_escalar_sismos():
     window_logs_1 = CTkToplevel()
     window_logs_1.title("En progreso")
     window_logs_1.resizable(False,False)
-    window_logs_1.transient(menu_window)
+    window_logs_1.transient(ventana_nivel_3)
     window_logs_1.grab_set()
-    width = 200
+    width = 250
     height = 80
     screen_width = window_logs_1.winfo_screenwidth()
     screen_height = window_logs_1.winfo_screenheight()
@@ -337,7 +353,7 @@ def generar_ventana_progreso_escalar_sismos():
     window_logs_1.after(1, lambda :window_logs_1.iconbitmap("progreso.ico"))
     #Label
     label_log = CTkLabel(master=window_logs_1,text=f"Escalando sismos...",font=('Gothic A1',13))
-    label_log.place(x=45,y=20)
+    label_log.place(x=65,y=20)
 
     def destruir_ventana_progreso_escalar_sismos():
 
@@ -347,12 +363,12 @@ def generar_ventana_progreso_escalar_sismos():
 
         if os.path.exists(ruta_log):
 
-            window_logs_1.after(1000, window_logs_1.destroy)
+            window_logs_1.after(10, window_logs_1.destroy)
 
             window_logs = CTkToplevel()
             window_logs.title("Éxito")
             window_logs.resizable(False,False)
-            window_logs.transient(menu_window)
+            window_logs.transient(ventana_nivel_3)
             window_logs.grab_set()
             width = 250
             height = 100
@@ -364,7 +380,7 @@ def generar_ventana_progreso_escalar_sismos():
             #Ícono ventana
             window_logs.after(201, lambda :window_logs.iconbitmap("exito.ico"))
             #Label
-            label_log = CTkLabel(master=window_logs,text=f"Sismos escalados correctamente",font=('Gothic A1',13))
+            label_log = CTkLabel(master=window_logs,text=f"Sismos escalados correctamente.",font=('Gothic A1',13))
             label_log.place(x=28,y=18)
             #Botón de ok
             OKBoton_window_log = CTkButton(master= window_logs,text="OK", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=window_logs.destroy)
@@ -375,7 +391,6 @@ def generar_ventana_progreso_escalar_sismos():
 
     destruir_ventana_progreso_escalar_sismos()
     
-
 def write_files(sismos:dict):
 
     #Ruta de almacenamiento
@@ -389,7 +404,9 @@ def write_files(sismos:dict):
     #Crea la carpeta que almacena el input de deep soil
     os.mkdir(f"{ruta_documentos}\input_deepsoil")
     os.mkdir(f"{ruta_documentos}\input_deepsoil/01_input")
-    os.mkdir(f"{ruta_documentos}\input_deepsoil/02_consolidado")
+    os.mkdir(f"{ruta_documentos}\input_deepsoil/02_consolidado/")
+    os.mkdir(f"{ruta_documentos}\input_deepsoil/02_consolidado/original/")
+    os.mkdir(f"{ruta_documentos}\input_deepsoil/02_consolidado/escalado/")
 
     #Escribe los archivos de entrada para deepsoil
     for sismo in list(sismos.keys()):
@@ -411,10 +428,22 @@ def write_files(sismos:dict):
             f.close()
             vector_consolidado.append(sismos[sismo][componente]["vector_escalado"])
         
-        #Escribe el vector consolidado
-        lines = formatear_consolidado(sismos[sismo])
+        #Escribe el vector consolidado escalado
+        lines, _ = formatear_consolidado(sismos[sismo],"vector_escalado")
 
-        with open(f"{ruta_documentos}\input_deepsoil/02_consolidado/{sismo}.txt", 'w') as f:
+        with open(f"{ruta_documentos}\input_deepsoil/02_consolidado/escalado/{sismo}.txt", 'w') as f:
+            f.write(f"t (s)\t{list(sismos[sismo].keys())[0]}\t{list(sismos[sismo].keys())[1]}\t{list(sismos[sismo].keys())[2]}\n")
+            for line in lines:
+                for value in line:
+                    f.write(value)
+                f.write("\n")
+
+        f.close()
+
+        #Escribe el vector consolidado original
+        lines, _ = formatear_consolidado(sismos[sismo],"vector")
+
+        with open(f"{ruta_documentos}\input_deepsoil/02_consolidado/original/{sismo}.txt", 'w') as f:
             f.write(f"t (s)\t{list(sismos[sismo].keys())[0]}\t{list(sismos[sismo].keys())[1]}\t{list(sismos[sismo].keys())[2]}\n")
             for line in lines:
                 for value in line:
@@ -423,9 +452,74 @@ def write_files(sismos:dict):
 
         f.close()
     
+def plot_signals(sismos:dict,ruta_documentos:str):
     
+    #Genera el excel
+    wb = xlsxwriter.Workbook(f'{ruta_documentos}\input_deepsoil\output.xlsx')
+
+    # Agregar una hoja de trabajo al archivo
+    for sismo in list(sismos.keys()):
+        # Establece el nombre de la hoja
+        ws = wb.add_worksheet(sismo)
+        #Genera el encabezado
+        ws.merge_range('B2:E2', sismo, wb.add_format({'bold': True, 'align': 'center'}))
+        #Establece ancho de columna
+        ws.set_column('B:E', 15)
+        #Centrar columnas
+        formato_centrado = wb.add_format({'align': 'center'})
+        #Genera el consolidado 
+        lines,componentes = formatear_consolidado(sismos[sismo],"vector_escalado")
+        #Escribe la primera linea
+        ws.write('B3', 't(s)',formato_centrado), ws.write('C3', componentes[0],formato_centrado), ws.write('D3', componentes[1],formato_centrado), ws.write('E3', componentes[2],formato_centrado)
+        #Escribe los datos
+        row = 4
+        col_index = ["B","C","D","E"]
+        for line in lines:
+            col = 0
+            for value in line:
+                #Extrae el valor antes del \t
+                value = value.split('\t')[0]
+                #Verifica que no sea espacio en blanco
+                patron = re.compile(r'\S')
+                if bool(patron.search(value)):
+                    ws.write(f"{col_index[col]}{row}",float(value),formato_centrado)
+
+                col+=1
+
+            row+=1
+
+        #Grafica
+        chart = wb.add_chart({'type': 'scatter', 'subtype': 'straight'})
+        chart.set_title({'name': sismo})
+        chart.set_size({'width': 629, 'height': 399})  # Ancho y alto en píxeles
+        chart.set_y_axis({'name': 'Aceleración (g)'})
+        chart.set_x_axis({'name': 'tiempo (s)','position_axis': 'on_tick','major_gridlines': {'visible': True}, 'minor_gridlines': {'visible': True,'line': {'color': '#CCCCCC'}}})
+        # Configurar los datos del gráfico de dispersión
+        chart.add_series({
+            'name': componentes[0],
+            'categories': f'={sismo}!$B$4:$B${row-1}',  # Eje X
+            'values':     f'={sismo}!$C$4:$C${row-1}',  # Eje Y
+            'line': {'color': '#4472C4'}  # Color de la línea
+        })
+        chart.add_series({
+            'name': componentes[1],
+            'categories': f'={sismo}!$B$4:$B${row-1}',  # Eje X
+            'values':     f'={sismo}!$D$4:$D${row-1}',  # Eje Y
+            'line': {'color': '#ED7D31'}  # Color de la línea
+        })
+        chart.add_series({
+            'name': componentes[2],
+            'categories': f'={sismo}!$B$4:$B${row-1}',  # Eje X
+            'values':     f'={sismo}!$E$4:$E${row-1}',  # Eje Y
+            'line': {'color': '#7C7C7C'}
+        })
+        # Insertar el gráfico en la hoja de trabajo
+        ws.insert_chart('H4', chart)
         
-def formatear_consolidado(sismo:dict):
+    wb.close()
+
+def formatear_consolidado(sismo:dict,tipo_senal:str):
+
     #Obtiene la longitud del vector de tiempo para cada componente
     n_vector_tiempo = [len(sismo[componente]["tiempo"]) for componente in list(sismo.keys())]
     n_max = max(n_vector_tiempo)
@@ -438,9 +532,9 @@ def formatear_consolidado(sismo:dict):
     cifras_decimales = contar_digitos_despues_del_punto(dt)
 
     #obtiene los tiempos y las aceleraciones de las tres componentes
-    t1,a1 = sismo[componentes[0]]["tiempo"], sismo[componentes[0]]["vector_escalado"]
-    t2,a2 = sismo[componentes[1]]["tiempo"], sismo[componentes[1]]["vector_escalado"]
-    t3 ,a3 = sismo[componentes[2]]["tiempo"], sismo[componentes[2]]["vector_escalado"]
+    t1,a1 = sismo[componentes[0]]["tiempo"], sismo[componentes[0]][tipo_senal]
+    t2,a2 = sismo[componentes[1]]["tiempo"], sismo[componentes[1]][tipo_senal]
+    t3 ,a3 = sismo[componentes[2]]["tiempo"], sismo[componentes[2]][tipo_senal]
 
     #Genera el cuerpo del archivo
     lines = []
@@ -475,7 +569,7 @@ def formatear_consolidado(sismo:dict):
 
         lines.append(tmp_list)
         
-    return lines
+    return lines,componentes
 
 def read_earthquakefile(carpeta_senales:str,rooth_file:str):
     #Abre el archivo y lo lee
@@ -495,8 +589,8 @@ def format_earthquakefile(lines:str):
         numeros = re.findall(r'[-+]?\d*\.?\d+E[+-]?\d+', line)
         tmp_list.append(numeros)
     
-    for j in range(len(tmp_list[0])):
-        for i in range(len(tmp_list)):
+    for i in range(len(tmp_list)):
+        for j in range(len(tmp_list[0])):
             try:
                 vector.append(tmp_list[i][j])
             except IndexError:
@@ -525,14 +619,297 @@ def contar_digitos_despues_del_punto(numero_str):
     digitos_despues_del_punto = len(numero_str) - indice_punto - 1
     return digitos_despues_del_punto
 
+def generar_ventana_4():
+
+    global ventana_nivel_4,textbox_ruta_output_deepsoil,boton_siguiente_output_deepsoil
+
+    #Ventana top level
+    ventana_nivel_4 = CTkToplevel()
+    #Nombre de la ventana
+    ventana_nivel_4.title("Examinar")
+    #Resizable
+    ventana_nivel_4.resizable(False,False)
+    ventana_nivel_4.transient(menu_window)
+    ventana_nivel_4.grab_set()
+    #Tema de la ventana
+    set_appearance_mode("light")
+    #Geometría
+    width = 400
+    height = 130
+    screen_width = ventana_nivel_4.winfo_screenwidth()
+    screen_height = ventana_nivel_4.winfo_screenheight()
+    x = (screen_width - width) // 2
+    y = (screen_height - height) // 2
+    ventana_nivel_4.geometry(f"{width}x{height}+{x}+{y}")
+    #Ícono ventana
+    ventana_nivel_4.after(201, lambda :ventana_nivel_4.iconbitmap("icono_principal.ico"))
+    #Label
+    label = CTkLabel(master=ventana_nivel_4,text=f"Ruta de salida archivos DEEPSOIL: ",font=('Gothic A1',13))
+    label.place(x=20,y=5)
+    #Textbox de la ruta de carpeta
+    textbox_ruta_output_deepsoil = CTkTextbox(master=ventana_nivel_4,font=('Gothic A1',12), text_color=("gray10", "gray90"),width=270,height=10,state=DISABLED,activate_scrollbars=False)
+    textbox_ruta_output_deepsoil.place(x=20,y=40)
+    #Boton examinar
+    boton_examinar_ruta_output_deepsoil = CTkButton(master= ventana_nivel_4, text="Examinar", width=80, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75,command=seleccionar_ruta_output_deepsoil)
+    boton_examinar_ruta_output_deepsoil.place(x=300,y=40)
+    #Boton siguiente señales peer
+    boton_siguiente_output_deepsoil = CTkButton(master= ventana_nivel_4, text="Siguiente", width=80, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75,state=tkinter.DISABLED,command=verificar_archivos_salidas_deepsoil)
+    boton_siguiente_output_deepsoil.place(x=160,y=85)
+
+def seleccionar_ruta_output_deepsoil():
+
+    global carpeta_output_deepsoil
+
+    carpeta_output_deepsoil = filedialog.askdirectory()
+
+    if carpeta_output_deepsoil:
+
+        # Muestra la ruta del archivo en el textbox
+        textbox_ruta_output_deepsoil.configure(state=NORMAL)
+        textbox_ruta_output_deepsoil.delete(0.0,"end")
+        textbox_ruta_output_deepsoil.insert(0.0,carpeta_output_deepsoil)
+        textbox_ruta_output_deepsoil.configure(state=DISABLED)
+
+        #Habilita el botón de siguiente
+        boton_siguiente_output_deepsoil.configure(state=NORMAL)
+
+def verificar_archivos_salidas_deepsoil():
+
+    def destruir_errores_ventana_4():
+        #modifica el textbox
+        textbox_ruta_output_deepsoil.configure(state=NORMAL)
+        textbox_ruta_output_deepsoil.delete(0.0,"end")
+        textbox_ruta_output_deepsoil.configure(state=DISABLED)
+        #destruye la ventana
+        window_logs.destroy()
+
+
+    #Warning si la carpeta está vacía
+    if len(os.listdir(carpeta_output_deepsoil)) == 0:
+
+        window_logs = CTkToplevel()
+        window_logs.title("Error")
+        window_logs.resizable(False,False)
+        window_logs.transient(ventana_nivel_4)
+        window_logs.grab_set()
+        width = 200
+        height = 100
+        screen_width = window_logs.winfo_screenwidth()
+        screen_height = window_logs.winfo_screenheight()
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+        window_logs.geometry(f"{width}x{height}+{x}+{y}")
+        #Ícono ventana
+        window_logs.after(201, lambda :window_logs.iconbitmap("error.ico"))
+        #Label
+        label_log = CTkLabel(master=window_logs,text=f"Carpeta vacía. \nPor favor seleccione otra.",font=('Gothic A1',13))
+        label_log.place(x=30,y=18)
+        #Botón de ok
+        OKBoton_window_log = CTkButton(master= window_logs,text="OK", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=destruir_errores_ventana_4)
+        OKBoton_window_log.place(x=80,y=65)
+        
+    else:
+        contiene_xlsx = False
+        #Warning si no hay extensiones correspondientes a .AT2
+        for archivo in os.listdir(carpeta_output_deepsoil):
+            if archivo.endswith(".xlsx"):
+                contiene_xlsx = True
+                break
+        
+        if contiene_xlsx:
+            # Minimizar la ventana actual
+            ventana_nivel_4.withdraw()
+            compilar_output_deepsoil()
+
+        else:
+            window_logs = CTkToplevel()
+            window_logs.title("Error")
+            window_logs.resizable(False,False)
+            window_logs.transient(ventana_nivel_4)
+            window_logs.grab_set()
+            width = 200
+            height = 100
+            screen_width = window_logs.winfo_screenwidth()
+            screen_height = window_logs.winfo_screenheight()
+            x = (screen_width - width) // 2
+            y = (screen_height - height) // 2
+            window_logs.geometry(f"{width}x{height}+{x}+{y}")
+            #Ícono ventana
+            window_logs.after(201, lambda :window_logs.iconbitmap("error.ico"))
+            #Label  
+            label_log = CTkLabel(master=window_logs,text=f"Archivos no válidos.",font=('Gothic A1',13))
+            label_log.place(x=45,y=18)
+            #Botón de ok
+            OKBoton_window_log = CTkButton(master= window_logs,text="OK", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=destruir_errores_ventana_4)
+            OKBoton_window_log.place(x=80,y=55)
+
+def compilar_output_deepsoil():
+
+    #Ruta de almacenamiento
+    ruta_documentos = os.path.expanduser("~\\Documents")
+
+    #Oculta la ventana de la ruta
+    ventana_nivel_4.withdraw()
+
+    if "log_compilado.log" in os.listdir(ruta_documentos):
+        os.remove(f"{ruta_documentos}/log_compilado.log")
+
+    try:
+        os.mkdir(f"{ruta_documentos}\output_deepsoil")
+    except OSError:
+        pass
+
+    def ejecutar_compilar_resultados_deepsoil():
+
+        #Lee los archivos en la ruta
+        file_list = os.listdir(carpeta_output_deepsoil)
+        #A todos les quita el prefijo "Results_profile_0_motion_" y la extensión del archivo
+        motion_name = [value.split("Results_profile_0_motion_")[1].split(".xlsx")[0] for value in file_list]
+
+        #Inicializa diccionario de almacenamiento
+        compilado_output_deepsoil = {}
+
+        #Abre los archivos y extrae el PSA
+        for f in motion_name:
+            #Abre el libro
+            wb = openpyxl.load_workbook(f"{carpeta_output_deepsoil}/Results_profile_0_motion_{f}.xlsx")
+            #Selecciona las hojas
+            layer1 = wb["Layer 1"]
+            input_motion = wb["Input Motion"]
+            # Crea el diccionario para almacenar
+            compilado_output_deepsoil[f] = {"Layer1":[],"Input_motion":[]}
+            #Encontra la máxima fila con datos en la columna del PSA en Layer1
+            max_fila = encontrar_maxima_fila_convalor(layer1,"J")
+            # Iterar sobre la hoja Layer 1 para extraer el PSA
+            for fila in layer1.iter_rows(min_row=2, max_row=max_fila, min_col=10, max_col=10):
+                for celda in fila:
+                    compilado_output_deepsoil[f]["Layer1"].append(celda.value)
+            #Encontra la máxima fila con datos en la columna del PSA en input motion
+            max_fila = encontrar_maxima_fila_convalor(input_motion,"E")
+            # Iterar sobre la hoja input motion para extraer el PSA
+            for fila in input_motion.iter_rows(min_row=3, max_row=max_fila, min_col=5, max_col=5):
+                for celda in fila:
+                    compilado_output_deepsoil[f]["Input_motion"].append(celda.value)
+
+            wb.close()
+
+        #Generar un excel donde escribe el compilado
+        wb = xlsxwriter.Workbook(f'{ruta_documentos}\output_deepsoil\output_deepsoil.xlsx')
+        # Establece el nombre de la hoja a Layer 1
+        ws = wb.add_worksheet("Layer 1")
+        #Establece ancho de columna
+        ws.set_column('A:ZZ', 25)
+        #Centrar columnas
+        formato_centrado = wb.add_format({'align': 'center'})
+        #Escribe layer 1
+        for j in range(len(list(compilado_output_deepsoil.keys()))):
+            name_signal = list(compilado_output_deepsoil.keys())[j] #nombre del sismo
+            ws.write(0,j,name_signal,formato_centrado)
+            for i in range(len(compilado_output_deepsoil[name_signal]["Layer1"])):
+                ws.write(i+1,j,float(compilado_output_deepsoil[name_signal]["Layer1"][i]),formato_centrado)
+
+        # Establece el nombre de la hoja a Input Motion
+        ws = wb.add_worksheet("Input Motion")
+        #Establece ancho de columna
+        ws.set_column('A:ZZ', 25)
+        #Centrar columnas
+        formato_centrado = wb.add_format({'align': 'center'})
+        #Escribe layer 1
+        for j in range(len(list(compilado_output_deepsoil.keys()))):
+            name_signal = list(compilado_output_deepsoil.keys())[j] #nombre del sismo
+            ws.write(0,j,name_signal,formato_centrado)
+            for i in range(len(compilado_output_deepsoil[name_signal]["Input_motion"])):
+                ws.write(i+1,j,float(compilado_output_deepsoil[name_signal]["Input_motion"][i]),formato_centrado)
+
+        wb.close()
+        
+        #Genera el log de terminación
+        with open(f"{ruta_documentos}/log_compilado.log","w") as f:
+            pass
+        f.close()
+
+    menu_window.after(100,ejecutar_compilar_resultados_deepsoil)
+    generar_ventana_progreso_compilar_resultados()
+
+def encontrar_maxima_fila_convalor(hoja,columna):
+    max_fila = hoja.max_row
+    for fila in range(hoja.max_row, 1, -1):  # Iterar de la fila máxima hacia abajo
+        if hoja[f"{columna}{fila}"].value is not None:  # Verificar si la celda en la columna J no está vacía
+            max_fila = fila
+            break
+
+    return max_fila
+
+def generar_ventana_progreso_compilar_resultados():
+
+    window_logs_1 = CTkToplevel()
+    window_logs_1.title("En progreso")
+    window_logs_1.resizable(False,False)
+    window_logs_1.transient(ventana_nivel_4)
+    window_logs_1.grab_set()
+    width = 250
+    height = 80
+    screen_width = window_logs_1.winfo_screenwidth()
+    screen_height = window_logs_1.winfo_screenheight()
+    x = (screen_width - width) // 2
+    y = (screen_height - height) // 2
+    window_logs_1.geometry(f"{width}x{height}+{x}+{y}")
+    #Ícono ventana
+    window_logs_1.after(1, lambda :window_logs_1.iconbitmap("progreso.ico"))
+    #Label
+    label_log = CTkLabel(master=window_logs_1,text=f"Compilando resultados...",font=('Gothic A1',13))
+    label_log.place(x=55,y=20)
+
+    def destruir_ventana_progreso_compilar_resultados():
+
+        # Ruta del archivo de log
+        ruta_documentos = os.path.expanduser("~\\Documents")
+        ruta_log = os.path.join(ruta_documentos, "log_compilado.log")
+
+        if os.path.exists(ruta_log):
+
+            window_logs_1.after(10, window_logs_1.destroy)
+
+            window_logs = CTkToplevel()
+            window_logs.title("Éxito")
+            window_logs.resizable(False,False)
+            window_logs.transient(ventana_nivel_4)
+            window_logs.grab_set()
+            width = 250
+            height = 100
+            screen_width = window_logs.winfo_screenwidth()
+            screen_height = window_logs.winfo_screenheight()
+            x = (screen_width - width) // 2
+            y = (screen_height - height) // 2
+            window_logs.geometry(f"{width}x{height}+{x}+{y}")
+            #Ícono ventana
+            window_logs.after(201, lambda :window_logs.iconbitmap("exito.ico"))
+            #Label
+            label_log = CTkLabel(master=window_logs,text=f"Compilación de resultados exitosa.",font=('Gothic A1',13))
+            label_log.place(x=28,y=18)
+            #Botón de ok
+            OKBoton_window_log = CTkButton(master= window_logs,text="OK", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=window_logs.destroy)
+            OKBoton_window_log.place(x=100,y=60)
+        
+        else:
+            window_logs_1.after(1000, destruir_ventana_progreso_compilar_resultados)
+
+    destruir_ventana_progreso_compilar_resultados()
+
 """
 MAIN
+
+Nombres de las ventanas:
+ - Ventana 1: Examinar la ruta de las señales.
+ - Ventana 2: Se observan los nombres de los sismos. El usuario puede seleccionar los sismos.
+ - Ventana 3: Incluir el factor de escala
+ - Ventana 4: Seleccionar ruta para leer los archivos
 """
 #Inicializa la ventana
 menu_window = CTk()
 #Geometría
 width = 300
-height = 300
+height = 180
 screen_width = menu_window.winfo_screenwidth()
 screen_height = menu_window.winfo_screenheight()
 x = (screen_width - width) // 2
@@ -546,9 +923,11 @@ menu_window.resizable(False,False)
 set_appearance_mode("light")
 #Ícono ventana
 menu_window.after(201, lambda :menu_window.iconbitmap("icono_principal.ico"))
-#Botón principal
-scale_signals_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Escalar señales",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open("icono_escalar.png"), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=ventana_senales_peer,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
+#Botón principal para escalar señales
+scale_signals_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Escalar señales",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open("icono_escalar.png"), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=generar_ventana_1,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
 scale_signals_button.place(x=70, y=25)
+#Botón principal para procesar resultados de deepsoil
+postprocessing_deepsoil_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Compilar resultados DEEPSOIL",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open("icono_postprocesar.png"), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=generar_ventana_4,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
+postprocessing_deepsoil_button.place(x=30, y=100)
 #Ejecuta la ventana
 menu_window.mainloop()
-

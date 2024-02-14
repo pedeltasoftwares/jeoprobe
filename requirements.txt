@@ -1,0 +1,6 @@
+customtkinter == 5.2.1
+numpy == 1.26.4
+openpyxl == 3.1.2
+packaging == 23.2
+pillow == 10.0.1
+xlsxWriter == 3.1.9
