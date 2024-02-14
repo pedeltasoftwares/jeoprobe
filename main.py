@@ -889,7 +889,7 @@ def generar_ventana_progreso_compilar_resultados():
             label_log.place(x=28,y=18)
             #Botón de ok
             OKBoton_window_log = CTkButton(master= window_logs,text="OK", width=50, height=12, compound="left",font=('Gothic A1',12),corner_radius=5, border_spacing=6,text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"),hover_color=("gray75", "gray25"),border_color="black",border_width=0.75, command=window_logs.destroy)
-            OKBoton_window_log.place(x=100,y=60)
+            OKBoton_window_log.place(x=95,y=60)
         
         else:
             window_logs_1.after(1000, destruir_ventana_progreso_compilar_resultados)
@@ -909,7 +909,7 @@ Nombres de las ventanas:
 menu_window = CTk()
 #Geometría
 width = 300
-height = 180
+height = 200
 screen_width = menu_window.winfo_screenwidth()
 screen_height = menu_window.winfo_screenheight()
 x = (screen_width - width) // 2
@@ -929,5 +929,8 @@ scale_signals_button.place(x=70, y=25)
 #Botón principal para procesar resultados de deepsoil
 postprocessing_deepsoil_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Compilar resultados DEEPSOIL",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open("icono_postprocesar.png"), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=generar_ventana_4,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
 postprocessing_deepsoil_button.place(x=30, y=100)
+#Label y logo de pedela
+label = CTkLabel(master=menu_window,text=f"Desarrollado por: PEDELTA Colombia SAS ",font=('Gothic A1',9))
+label.place(x=10,y=170)
 #Ejecuta la ventana
 menu_window.mainloop()
