@@ -34,7 +34,7 @@ def generar_ventana_1():
     y = (screen_height - height) // 2
     ventana_nivel_1.geometry(f"{width}x{height}+{x}+{y}")
     #Ícono ventana
-    ventana_nivel_1.after(201, lambda :ventana_nivel_1.iconbitmap("icono_principal.ico"))
+    ventana_nivel_1.after(201, lambda :ventana_nivel_1.iconbitmap(os.path.join(images_path, "icono_principal.ico")))
     #Label
     label = CTkLabel(master=ventana_nivel_1,text=f"Ruta de almacenamiento señales PEER: ",font=('Gothic A1',13))
     label.place(x=20,y=5)
@@ -92,7 +92,7 @@ def verificar_sismos_peer():
         y = (screen_height - height) // 2
         window_logs.geometry(f"{width}x{height}+{x}+{y}")
         #Ícono ventana
-        window_logs.after(201, lambda :window_logs.iconbitmap("error.ico"))
+        window_logs.after(201, lambda :window_logs.iconbitmap(os.path.join(images_path, "error.ico")))
         #Label
         label_log = CTkLabel(master=window_logs,text=f"Carpeta vacía. \nPor favor seleccione otra.",font=('Gothic A1',13))
         label_log.place(x=30,y=18)
@@ -127,7 +127,7 @@ def verificar_sismos_peer():
             y = (screen_height - height) // 2
             window_logs.geometry(f"{width}x{height}+{x}+{y}")
             #Ícono ventana
-            window_logs.after(201, lambda :window_logs.iconbitmap("error.ico"))
+            window_logs.after(201, lambda :window_logs.iconbitmap(os.path.join(images_path, "error.ico")))
             #Label
             label_log = CTkLabel(master=window_logs,text=f"Archivos no válidos.",font=('Gothic A1',13))
             label_log.place(x=45,y=18)
@@ -154,7 +154,7 @@ def generar_ventana_2():
     y = (screen_height - height) // 2
     ventana_nivel_2.geometry(f"{width}x{height}+{x}+{y}")
     #Ícono ventana
-    ventana_nivel_2.after(201, lambda :ventana_nivel_2.iconbitmap("icono_principal.ico"))
+    ventana_nivel_2.after(201, lambda :ventana_nivel_2.iconbitmap(os.path.join(images_path, "icono_principal.ico")))
     #Listbox
     file_listbox = tkinter.Listbox(ventana_nivel_2, selectmode=tkinter.MULTIPLE, width=50, height=15)
     file_listbox.place(x=22,y=10)
@@ -214,7 +214,7 @@ def generar_ventana_3():
         y = (screen_height - height) // 2
         window_logs.geometry(f"{width}x{height}+{x}+{y}")
         #Ícono ventana
-        window_logs.after(201, lambda :window_logs.iconbitmap("error.ico"))
+        window_logs.after(201, lambda :window_logs.iconbitmap(os.path.join(images_path, "error.ico")))
         #Label
         label_log = CTkLabel(master=window_logs,text=f"Debe seleccionar \nal menos un sismo.",font=('Gothic A1',13))
         label_log.place(x=45,y=18)
@@ -242,7 +242,7 @@ def generar_ventana_3():
         y = (screen_height - height) // 2
         ventana_nivel_3.geometry(f"{width}x{height}+{x}+{y}")
         #Ícono ventana
-        ventana_nivel_3.after(201, lambda :ventana_nivel_3.iconbitmap("icono_principal.ico"))
+        ventana_nivel_3.after(201, lambda :ventana_nivel_3.iconbitmap(os.path.join(images_path, "icono_principal.ico")))
         #Label
         label = CTkLabel(master=ventana_nivel_3,text=f"Factor de escala:",font=('Gothic A1',13))
         label.place(x=50,y=8)
@@ -281,7 +281,7 @@ def verificar_factor_escala():
         y = (screen_height - height) // 2
         window_logs.geometry(f"{width}x{height}+{x}+{y}")
         #Ícono ventana
-        window_logs.after(201, lambda :window_logs.iconbitmap("error.ico"))
+        window_logs.after(201, lambda :window_logs.iconbitmap(os.path.join(images_path, "error.ico")))
         #Label
         label_log = CTkLabel(master=window_logs,text=f"El factor de escala debe ser\nun valor número.",font=('Gothic A1',13))
         label_log.place(x=20,y=18)
@@ -350,7 +350,7 @@ def generar_ventana_progreso_escalar_sismos():
     y = (screen_height - height) // 2
     window_logs_1.geometry(f"{width}x{height}+{x}+{y}")
     #Ícono ventana
-    window_logs_1.after(1, lambda :window_logs_1.iconbitmap("progreso.ico"))
+    window_logs_1.after(1, lambda :window_logs_1.iconbitmap(os.path.join(images_path, "progreso.ico")))
     #Label
     label_log = CTkLabel(master=window_logs_1,text=f"Escalando sismos...",font=('Gothic A1',13))
     label_log.place(x=65,y=20)
@@ -378,7 +378,7 @@ def generar_ventana_progreso_escalar_sismos():
             y = (screen_height - height) // 2
             window_logs.geometry(f"{width}x{height}+{x}+{y}")
             #Ícono ventana
-            window_logs.after(201, lambda :window_logs.iconbitmap("exito.ico"))
+            window_logs.after(201, lambda :window_logs.iconbitmap(os.path.join(images_path, "exito.ico")))
             #Label
             label_log = CTkLabel(master=window_logs,text=f"Sismos escalados correctamente.",font=('Gothic A1',13))
             label_log.place(x=28,y=18)
@@ -642,7 +642,7 @@ def generar_ventana_4():
     y = (screen_height - height) // 2
     ventana_nivel_4.geometry(f"{width}x{height}+{x}+{y}")
     #Ícono ventana
-    ventana_nivel_4.after(201, lambda :ventana_nivel_4.iconbitmap("icono_principal.ico"))
+    ventana_nivel_4.after(201, lambda :ventana_nivel_4.iconbitmap(os.path.join(images_path, "icono_principal.ico")))
     #Label
     label = CTkLabel(master=ventana_nivel_4,text=f"Ruta de salida archivos DEEPSOIL: ",font=('Gothic A1',13))
     label.place(x=20,y=5)
@@ -700,7 +700,7 @@ def verificar_archivos_salidas_deepsoil():
         y = (screen_height - height) // 2
         window_logs.geometry(f"{width}x{height}+{x}+{y}")
         #Ícono ventana
-        window_logs.after(201, lambda :window_logs.iconbitmap("error.ico"))
+        window_logs.after(201, lambda :window_logs.iconbitmap(os.path.join(images_path, "error.ico")))
         #Label
         label_log = CTkLabel(master=window_logs,text=f"Carpeta vacía. \nPor favor seleccione otra.",font=('Gothic A1',13))
         label_log.place(x=30,y=18)
@@ -735,7 +735,7 @@ def verificar_archivos_salidas_deepsoil():
             y = (screen_height - height) // 2
             window_logs.geometry(f"{width}x{height}+{x}+{y}")
             #Ícono ventana
-            window_logs.after(201, lambda :window_logs.iconbitmap("error.ico"))
+            window_logs.after(201, lambda :window_logs.iconbitmap(os.path.join(images_path, "error.ico")))
             #Label  
             label_log = CTkLabel(master=window_logs,text=f"Archivos no válidos.",font=('Gothic A1',13))
             label_log.place(x=45,y=18)
@@ -855,7 +855,7 @@ def generar_ventana_progreso_compilar_resultados():
     y = (screen_height - height) // 2
     window_logs_1.geometry(f"{width}x{height}+{x}+{y}")
     #Ícono ventana
-    window_logs_1.after(1, lambda :window_logs_1.iconbitmap("progreso.ico"))
+    window_logs_1.after(1, lambda :window_logs_1.iconbitmap(os.path.join(images_path, "progreso.ico")))
     #Label
     label_log = CTkLabel(master=window_logs_1,text=f"Compilando resultados...",font=('Gothic A1',13))
     label_log.place(x=55,y=20)
@@ -883,7 +883,7 @@ def generar_ventana_progreso_compilar_resultados():
             y = (screen_height - height) // 2
             window_logs.geometry(f"{width}x{height}+{x}+{y}")
             #Ícono ventana
-            window_logs.after(201, lambda :window_logs.iconbitmap("exito.ico"))
+            window_logs.after(201, lambda :window_logs.iconbitmap(os.path.join(images_path, "exito.ico")))
             #Label
             label_log = CTkLabel(master=window_logs,text=f"Compilación de resultados exitosa.",font=('Gothic A1',13))
             label_log.place(x=28,y=18)
@@ -922,12 +922,13 @@ menu_window.resizable(False,False)
 #Tema de la ventana
 set_appearance_mode("light")
 #Ícono ventana
-menu_window.after(201, lambda :menu_window.iconbitmap("icono_principal.ico"))
+images_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "images")
+menu_window.after(201, lambda :menu_window.iconbitmap(os.path.join(images_path, "icono_principal.ico")))
 #Botón principal para escalar señales
-scale_signals_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Escalar señales",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open("icono_escalar.png"), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=generar_ventana_1,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
+scale_signals_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Escalar señales",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open(os.path.join(images_path, "icono_escalar.png")), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=generar_ventana_1,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
 scale_signals_button.place(x=70, y=25)
 #Botón principal para procesar resultados de deepsoil
-postprocessing_deepsoil_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Compilar resultados DEEPSOIL",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open("icono_postprocesar.png"), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=generar_ventana_4,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
+postprocessing_deepsoil_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Compilar resultados DEEPSOIL",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open(os.path.join(images_path, "icono_postprocesar.png")), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=generar_ventana_4,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
 postprocessing_deepsoil_button.place(x=30, y=100)
 #Label y logo de pedela
 label = CTkLabel(master=menu_window,text=f"Desarrollado por: PEDELTA Colombia SAS ",font=('Gothic A1',9))
