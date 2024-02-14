@@ -754,6 +754,11 @@ def compilar_output_deepsoil():
     if "log_compilado.log" in os.listdir(ruta_documentos):
         os.remove(f"{ruta_documentos}/log_compilado.log")
 
+    #verifica si existe una carpeta llamada "output_deepsoil"
+    for file in os.listdir(ruta_documentos):
+        if "output_deepsoil" in file:
+            shutil.rmtree(f"{ruta_documentos}\output_deepsoil")
+
     try:
         os.mkdir(f"{ruta_documentos}\output_deepsoil")
     except OSError:
