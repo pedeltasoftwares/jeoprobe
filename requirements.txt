@@ -1,6 +1,9 @@
 customtkinter == 5.2.1
+gspread == 5.11.2
 numpy == 1.26.4
 openpyxl == 3.1.2
 packaging == 23.2
+pandas == 2.1.1
 pillow == 10.0.1
+uuid == 1.30
 xlsxWriter == 3.1.9

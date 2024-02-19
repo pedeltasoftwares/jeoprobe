@@ -10,6 +10,10 @@ import numpy as np
 import shutil
 import xlsxwriter
 import openpyxl
+from tkinter import messagebox
+import uuid
+import gspread
+import pandas as pd
 
 def generar_ventana_1():
 
@@ -901,6 +905,60 @@ def generar_ventana_progreso_compilar_resultados():
 
     destruir_ventana_progreso_compilar_resultados()
 
+def googleSpreadSheetConnect(file_key:str,sheet_name:str,token_path:str):
+    """
+    Input args:
+        file_key: Código genérico del archivo (se encuentra en la url)
+        sheet_name: Nombre de la hoja
+        token_path: Ruta del token para conectarse a la API
+    Output args:
+        sheet: Hoja como objeto
+    """
+
+    #Conecta con google spreadsheet
+    service = gspread.service_account(token_path)
+
+    #Obtiene la hoja
+    workbook = service.open_by_key(file_key)
+    sheet = workbook.worksheet(sheet_name)
+
+    return sheet
+
+def read_mac(sheet:object):
+    """
+    Input args:
+        sheet: Hoja como objeto
+    Output args:
+        dataframe: DataFrame con los registros de los usuarios
+    """
+
+    mac  = sheet.col_values(1)[1:]
+
+    return mac
+
+# Función para obtener la dirección MAC
+def obtener_mac_address():
+    mac_address = uuid.getnode()
+    return ':'.join(('%012X' % mac_address)[i:i+2] for i in range(0, 12, 2))
+
+# Función para verificar la dirección MAC y mostrar la interfaz si está autorizada
+def verificar_mac_y_ejecutar_programa():
+    #conecta con la hoja
+    file_key = "1eqoRsAenQj5azn99eG0fPyj8kRFHaySvm6jBldVBmQw"
+    sheet_name = "Equipos autorizados"
+    token_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "service_account/service_account.json") 
+    sheet = googleSpreadSheetConnect(file_key,sheet_name,token_path)
+    mac = read_mac(sheet)
+    print(mac)
+    mac_address_actual = obtener_mac_address()
+    print(mac_address_actual)
+    if mac_address_actual in mac:
+        # Si la dirección MAC coincide, mostrar la interfaz
+        ejecutar_programa()
+    else:
+        # Si la dirección MAC no coincide, mostrar un mensaje de error y salir del programa
+        messagebox.showerror("Error", "Licencia no activa.")
+
 """
 MAIN
 
@@ -910,33 +968,38 @@ Nombres de las ventanas:
  - Ventana 3: Incluir el factor de escala
  - Ventana 4: Seleccionar ruta para leer los archivos
 """
-#Inicializa la ventana
-menu_window = CTk()
-#Geometría
-width = 300
-height = 200
-screen_width = menu_window.winfo_screenwidth()
-screen_height = menu_window.winfo_screenheight()
-x = (screen_width - width) // 2
-y = (screen_height - height) // 2
-menu_window.geometry(f"{width}x{height}+{x}+{y}")
-#Nombre de la ventana
-menu_window.title("Procesamiento señales")
-#Resizable
-menu_window.resizable(False,False)
-#Tema de la ventana
-set_appearance_mode("light")
-#Ícono ventana
-images_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "images")
-menu_window.after(201, lambda :menu_window.iconbitmap(os.path.join(images_path, "icono_principal.ico")))
-#Botón principal para escalar señales
-scale_signals_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Escalar señales",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open(os.path.join(images_path, "icono_escalar.png")), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=generar_ventana_1,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
-scale_signals_button.place(x=70, y=25)
-#Botón principal para procesar resultados de deepsoil
-postprocessing_deepsoil_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Compilar resultados DEEPSOIL",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open(os.path.join(images_path, "icono_postprocesar.png")), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=generar_ventana_4,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
-postprocessing_deepsoil_button.place(x=30, y=100)
-#Label y logo de pedela
-label = CTkLabel(master=menu_window,text=f"Desarrollado por: PEDELTA Colombia SAS ",font=('Gothic A1',9))
-label.place(x=10,y=170)
-#Ejecuta la ventana
-menu_window.mainloop()
+def ejecutar_programa():
+    global images_path, menu_window
+    #Inicializa la ventana
+    menu_window = CTk()
+    #Geometría
+    width = 300
+    height = 200
+    screen_width = menu_window.winfo_screenwidth()
+    screen_height = menu_window.winfo_screenheight()
+    x = (screen_width - width) // 2
+    y = (screen_height - height) // 2
+    menu_window.geometry(f"{width}x{height}+{x}+{y}")
+    #Nombre de la ventana
+    menu_window.title("Procesamiento señales")
+    #Resizable
+    menu_window.resizable(False,False)
+    #Tema de la ventana
+    set_appearance_mode("light")
+    #Ícono ventana
+    images_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "images")
+    menu_window.after(201, lambda :menu_window.iconbitmap(os.path.join(images_path, "icono_principal.ico")))
+    #Botón principal para escalar señales
+    scale_signals_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Escalar señales",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open(os.path.join(images_path, "icono_escalar.png")), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=generar_ventana_1,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
+    scale_signals_button.place(x=70, y=25)
+    #Botón principal para procesar resultados de deepsoil
+    postprocessing_deepsoil_button = CTkButton(master= menu_window, corner_radius=5, height=40, border_spacing=10, text="Compilar resultados DEEPSOIL",text_color=("gray10", "gray90"),fg_color=("gray85", "gray15"), image= CTkImage(Image.open(os.path.join(images_path, "icono_postprocesar.png")), size=(30, 30)), anchor="w",font=('Gothic A1',13),command=generar_ventana_4,hover_color=("gray75", "gray25"),border_color="black",border_width=0.75)
+    postprocessing_deepsoil_button.place(x=30, y=100)
+    #Label y logo de pedela
+    label = CTkLabel(master=menu_window,text=f"Desarrollado por: PEDELTA Colombia SAS ",font=('Gothic A1',9))
+    label.place(x=10,y=170)
+    #Ejecuta la ventana
+    menu_window.mainloop()
+
+# Verificar la dirección MAC y mostrar la interfaz si está autorizada
+verificar_mac_y_ejecutar_programa()
